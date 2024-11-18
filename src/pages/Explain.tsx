@@ -40,7 +40,7 @@ const Explain = () => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/fetch-transcript/',
+        'quick-notes-backend-three.vercel.app/fetch-transcript/',
         { urls },
         {
           headers: {

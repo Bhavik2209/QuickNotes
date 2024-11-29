@@ -3,6 +3,9 @@ import { Youtube, Brain, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import mermaid from 'mermaid';
+import MermaidDiagram from '../components/MermaidDiagram';
+
+
 
 const Explain = () => {
   const [urls, setUrls] = useState(['']);
@@ -40,7 +43,7 @@ const Explain = () => {
 
     try {
       const response = await axios.post(
-        'quick-notes-backend-three.vercel.app/fetch-transcript/',
+        'http://127.0.0.1:8000/fetch-transcript/',
         { urls },
         {
           headers: {
@@ -187,12 +190,21 @@ const Explain = () => {
           <div className="mt-8 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8 animate-fade-in shadow-xl">
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
               <Brain className="h-6 w-6 text-indigo-400" />
-              <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"> AI Explanation Diagram</span>
+              <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"> AI Explanation</span>
             </h2>
             <ReactMarkdown components={components} className="prose prose-invert prose-lg text-gray-300 leading-relaxed">
               {explanation}
             </ReactMarkdown>
-            
+            {diagram && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
+                  <Brain className="h-6 w-6 text-indigo-400" />
+                  <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Diagram</span>
+                </h2>
+                <MermaidDiagram chart={diagram} />
+              </div>
+            )}
+
             <div className="flex justify-end mt-4">
               <button
                 onClick={handleDownload}

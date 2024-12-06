@@ -2,22 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Youtube, Brain, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
-import mermaid from 'mermaid';
+import InteractiveDiagram from '../components/InteractiveDiagram'; // Import the new D3.js diagram component
 
 const Explain = () => {
   const [urls, setUrls] = useState(['']);
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] = useState(null);
-  const [diagram, setDiagram] = useState(null); // State to store the Mermaid diagram
+  const [diagram, setDiagram] = useState(null); 
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Initialize Mermaid
-    if (diagram) {
-      mermaid.initialize({ startOnLoad: true });
-      mermaid.contentLoaded();
-    }
-  }, [diagram]);
 
   const handleUrlChange = (index, value) => {
     const newUrls = [...urls];
@@ -38,24 +30,40 @@ const Explain = () => {
     setExplanation(null);
     setDiagram(null);
 
-    try {
-      const response = await axios.post(
-        'http://127.0.0.1:8000/fetch-transcript/',
-        { urls },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
 
+  try {
+    const response = await axios.post(
+      'http://127.0.0.1:8000/fetch-transcript/',
+      { urls },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Full Response:', response.data);
+    console.log('Diagram Data:', response.data.diagram);
+
+    setExplanation(response.data.transcript);
+    setDiagram(response.data.diagram);
+  
       if (response.data.error) {
         throw new Error(response.data.error);
       }
-
+  
       setExplanation(response.data.transcript);
-      setDiagram(response.data.diagram); // Set the Mermaid diagram from the response
+      
+      // Additional type checking and logging
+      if (response.data.diagram && 
+          Array.isArray(response.data.diagram.nodes) && 
+          Array.isArray(response.data.diagram.links)) {
+        setDiagram(response.data.diagram);
+      } else {
+        console.warn('Diagram data does not match expected structure:', response.data.diagram);
+      }
     } catch (err) {
+      console.error('Error fetching explanation:', err);
       setError('Unable to summarize this video. Please check the URL or try again later.');
     } finally {
       setLoading(false);
@@ -114,6 +122,7 @@ const Explain = () => {
             </h1>
           </div>
           <p className="text-gray-400 text-lg">Enter up to 3 YouTube video URLs to receive AI-powered explanations</p>
+          <p className="text-gray-400 text-lg">Note: The total length of all combined videos should not exceed 60 minutes.</p>
         </div>
 
         <form onSubmit={handleExplain} className="space-y-6">
@@ -167,24 +176,49 @@ const Explain = () => {
         </form>
 
         {error && (
-          <div className="mt-8 bg-red-500/10 border border-red-500/50 text-red-200 px-6 py-4 rounded-xl">
-            {error}
+          <div className="mt-8 bg-red-500/10 border border-red-500/50 text-red-200 px-6 py-4 rounded-xl animate-fade-in">
+            <div className="flex items-center gap-2">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          </div>
+        )}
+
+        {!explanation && !loading && !error && (
+          <div className="text-center bg-gray-800 border border-gray-700 rounded-lg p-8 mt-6">
+            <Youtube className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-400">Enter YouTube URLs above to get started</p>
           </div>
         )}
 
         {explanation && (
-          <div className="mt-12">
-            <ReactMarkdown components={components} className="text-white">
+          <div className="mt-8 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8 animate-fade-in shadow-xl">
+            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
+              <Brain className="h-6 w-6 text-indigo-400" />
+              <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"> AI Explanation</span>
+            </h2>
+            <ReactMarkdown components={components} className="prose prose-invert prose-lg text-gray-300 leading-relaxed">
               {explanation}
             </ReactMarkdown>
-          </div>
-        )}
+            {diagram && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
+                  <Brain className="h-6 w-6 text-indigo-400" />
+                  <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Conceptual Diagram</span>
+                </h2>
+                <InteractiveDiagram data={diagram} />
+              </div>
+            )}
 
-        {diagram && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-white mb-4">Diagram</h2>
-            <div className="mermaid">
-              {diagram}
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handleDownload}
+                className="px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white transition-all duration-200"
+              >
+                Download Explanation
+              </button>
             </div>
           </div>
         )}

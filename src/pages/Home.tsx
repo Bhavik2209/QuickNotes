@@ -1,37 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Youtube, Brain, Sparkles, BookOpen } from 'lucide-react';
-
-const QuickTubeLogo = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="h-8 w-8">
-    <defs>
-      <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style={{stopColor:"#6366F1"}}/>
-        <stop offset="100%" style={{stopColor:"#8B5CF6"}}/>
-      </linearGradient>
-    </defs>
-    
-    <circle cx="16" cy="16" r="14" fill="url(#brainGradient)"/>
-    
-    <path d="M16,10 
-             C19,10 21,11 21,13
-             C21,14.5 19,15 19,16.5
-             C19,18 21,18.5 21,20
-             C21,22 19,23 16,23
-             C13,23 11,22 11,20
-             C11,18.5 13,18 13,16.5
-             C13,15 11,14.5 11,13
-             C11,11 13,10 16,10Z" 
-          stroke="white" 
-          fill="none"
-          strokeWidth="1.5"
-          strokeLinejoin="round"/>
-  </svg>
-);
-
+import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user, signInWithGoogle } = useAuth();
 
   return (
     <div className="max-w-4xl mx-auto my-10">
@@ -42,17 +16,28 @@ const Home = () => {
         <p className="text-xl text-gray-300 mb-8">
           Get AI-powered explanations for any YouTube video in simple, easy-to-understand language
         </p>
-        <button
-          onClick={() => navigate('/explain')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center space-x-2 mx-auto"
-        >
-          <Brain className="h-8 w-8  text-white-400" />
-          <span>Start Explaining Videos</span>
-        </button>
+        {user ? (
+          <button
+            onClick={() => navigate('/explain')}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center space-x-2 mx-auto"
+          >
+            <Brain className="h-8 w-8 text-white-400" />
+            <span>Start Explaining Videos</span>
+          </button>
+        ) : (
+          <div 
+            onClick={signInWithGoogle}
+            className="cursor-pointer transform hover:scale-105 transition-transform duration-200"
+          >
+            <p className="text-2xl font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text animate-pulse">
+              Sign in now to start exploring!
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 mb-16">
-        <FeatureCard class="bg-gray-900"
+        <FeatureCard
           icon={<Youtube className="h-8 w-8 text-red-500" />}
           title="Any YouTube Video"
           description="Simply paste the URL of any YouTube video you want to understand better"

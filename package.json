@@ -1,15 +1,17 @@
 {
-  "name": "youtube-explainer",
+  "name": "quicknotes",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "start": "vite preview"
+    "build": "tsc && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.6.7",
+    "firebase": "^10.8.0",
     "lucide-react": "^0.344.0",
     "mermaid": "^11.4.0",
     "react": "^18.3.1",

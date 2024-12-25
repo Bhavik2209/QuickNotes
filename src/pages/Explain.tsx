@@ -4,6 +4,7 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import mermaid from 'mermaid';
 import MermaidDiagram from '../components/MermaidDiagram';
+import { downloadExplanationAsPDF } from '../components/PdfDownload';
 
 
 
@@ -66,13 +67,9 @@ const Explain = () => {
   };
 
   const handleDownload = () => {
-    const blob = new Blob([explanation], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'explanation.txt';
-    link.click();
-    URL.revokeObjectURL(url);
+    if (explanation) {
+      downloadExplanationAsPDF(explanation);
+    }
   };
 
   const components = {

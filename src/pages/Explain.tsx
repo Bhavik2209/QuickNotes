@@ -44,7 +44,7 @@ const Explain = () => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/fetch-transcript/',
+        'https://quicknotesbackend-production.up.railway.app/fetch-transcript/',
         { urls },
         {
           headers: {
@@ -114,7 +114,7 @@ const Explain = () => {
             </h1>
           </div>
           <p className="text-gray-400 text-lg">Enter up to 3 YouTube video URLs to receive AI-powered explanations</p>
-          <p className="text-gray-400 text-lg">Note: The total length of all combined videos should not exceed 60 minutes.</p>
+          <p className="text-gray-400 text-lg">Note: Video length should not exceed 60 minutes.</p>
         </div>
 
         <form onSubmit={handleExplain} className="space-y-6">
@@ -137,15 +137,15 @@ const Explain = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button
+            {/* <button
               type="button"
               onClick={addUrlInput}
-              disabled={urls.length >= 3}
+              disabled={urls.length >= 1}
               className="px-6 py-3 rounded-xl font-semibold text-indigo-400 border border-indigo-400 hover:bg-indigo-400/10 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <span>Add Another Video</span>
-              {urls.length < 3 && <span className="text-sm">({3 - urls.length} left)</span>}
-            </button>
+              {urls.length < 1 && <span className="text-sm">({1 - urls.length} left)</span>}
+            </button> */}
 
             <button
               type="submit"
@@ -160,7 +160,7 @@ const Explain = () => {
               ) : (
                 <>
                   <Brain className="h-5 w-5" />
-                  <span>Explain Videos</span>
+                  <span>Explain Video</span>
                 </>
               )}
             </button>

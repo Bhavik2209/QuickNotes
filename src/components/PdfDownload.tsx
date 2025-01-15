@@ -48,8 +48,11 @@ export const downloadExplanationAsPDF = (explanation) => {
       // Split text into lines that fit the page width
       const lines = doc.splitTextToSize(cleanedSection, 180);
       
-      doc.text(lines, 15, yPosition);
-      yPosition += lines.length * 7;  // Adjust line spacing
+      // Add each line to the PDF
+      lines.forEach((line) => {
+        doc.text(line, 15, yPosition);
+        yPosition += 7;  // Adjust line spacing
+      });
     }
     
     // Add some extra space between sections

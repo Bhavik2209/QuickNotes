@@ -5,14 +5,14 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build"  // Ensure this matches your build output directory
+        "distDir": "build"  
       }
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",  // Match all routes
-      "dest": "/index.html"  // Redirect all requests to index.html
+      "src": "/(.*)",  
+      "dest": "/index.html"  
     }
   ]
 }
